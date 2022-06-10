@@ -15,6 +15,7 @@ function Table() {
     numericFilter,
     setNumericFilter,
   } = useContext(PlanetsContext);
+  // atualiza o input ao digitar
   const handlePlanetsFilter = ({ target }) => {
     setPlanetsfilter(target.value);
   };
@@ -46,6 +47,17 @@ function Table() {
       value,
     };
     setNumericFilter([...numericFilter, newNumericFilter]);
+  };
+
+  // remove cada filtro individualmente.
+  const removeChang = (index) => {
+    setNumericFilter(
+      numericFilter.filter((_item, intemIndex) => intemIndex !== index),
+    );
+  };
+
+  const removeAll = () => {
+    setNumericFilter([]);
   };
 
   return (
@@ -96,6 +108,13 @@ function Table() {
           filter
 
         </button>
+        <button
+          data-testid="button-remove-filters"
+          type="button"
+          onClick={ removeAll }
+        >
+          Remover Filtros
+        </button>
       </form>
       { numericFilter.map((filter, index) => (
         <div key={ index }>
@@ -105,6 +124,12 @@ function Table() {
             {filter.operation}
             {' '}
             {filter.value}
+            <button
+              type="button"
+              onClick={ () => removeChang(index) }
+            >
+              Remove
+            </button>
           </p>
         </div>
       )) }
