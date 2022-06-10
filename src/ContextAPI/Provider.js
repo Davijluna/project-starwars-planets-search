@@ -5,6 +5,10 @@ import PlanetsContext from './PlanetsContext';
 function Provider({ children }) {
   const [data, setData] = useState([]);
   const [planetsFilter, setPlanetsfilter] = useState([]); // linha test.
+  const [column, setColumn] = useState('population');
+  const [operation, setOperation] = useState('maior que');
+  const [value, setValue] = useState('0');
+  const [numericFilter, setNumericFilter] = useState([]);
 
   useEffect(() => {
     const fetcStarWars = async () => {
@@ -16,7 +20,20 @@ function Provider({ children }) {
     fetcStarWars();
   }, []);
 
-  const data2 = { data, setPlanetsfilter, setData, planetsFilter };
+  const data2 = {
+    data,
+    setPlanetsfilter,
+    setData,
+    planetsFilter,
+    column,
+    setColumn,
+    operation,
+    setOperation,
+    value,
+    setValue,
+    numericFilter,
+    setNumericFilter,
+  };
 
   return (
     <PlanetsContext.Provider

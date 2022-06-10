@@ -3,7 +3,18 @@ import React, { useContext, useEffect, useState } from 'react';
 import PlanetsContext from '../ContextAPI/PlanetsContext';
 
 function Table() {
-  const { data, setPlanetsfilter, planetsFilter } = useContext(PlanetsContext);
+  const { data,
+    setPlanetsfilter,
+    planetsFilter,
+    column,
+    setColumn,
+    operation,
+    setOperation,
+    value,
+    setValue,
+    numericFilter,
+    setNumericFilter,
+  } = useContext(PlanetsContext);
   const handlePlanetsFilter = ({ target }) => {
     setPlanetsfilter(target.value);
   };
@@ -12,8 +23,30 @@ function Table() {
 
   useEffect(() => {
     const filterData = data.filter((planets) => planets.name.includes(planetsFilter));
-    setDataAPI(filterData);
-  }, [planetsFilter, data]);
+    const resultArray = numericFilter
+      .reduce((accumulator, filter) => accumulator.filter((item) => {
+        switch (filter.operation) {
+        case 'maior que':
+          return Number(item[filter.column]) > Number(filter.value);
+        case 'menor que':
+          return Number(item[filter.column]) < Number(filter.value);
+        case 'igual a':
+          return Number(item[filter.column]) === Number(filter.value);
+        default:
+          return true;
+        }
+      }), filterData);
+    setDataAPI(resultArray);
+  }, [planetsFilter, data, numericFilter]);
+
+  const handleNumericFilter = () => {
+    const newNumericFilter = {
+      column,
+      operation,
+      value,
+    };
+    setNumericFilter([...numericFilter, newNumericFilter]);
+  };
 
   return (
     <div>
@@ -25,22 +58,56 @@ function Table() {
           onChange={ handlePlanetsFilter }
         />
         <label htmlFor="planets">
-          Filter
-          <select>
-            <option>name1</option>
-            <option>name2</option>
+          Coluna
+          <select
+            data-testid="column-filter"
+            onChange={ ({ target }) => setColumn(target.value) }
+          >
+            <option>population</option>
+            <option>orbital_period</option>
+            <option>diameter</option>
+            <option>rotation_period</option>
+            <option>surface_water</option>
           </select>
         </label>
         <label htmlFor="planets">
           Operation
-          <select>
+          <select
+            data-testid="comparison-filter"
+            onChange={ ({ target }) => setOperation(target.value) }
+          >
             <option>maior que</option>
             <option>menor que</option>
+            <option>igual a</option>
           </select>
         </label>
-        <input type="number" placeholder="0" />
-        <button type="button">filter</button>
+        <input
+          data-testid="value-filter"
+          type="number"
+          placeholder="0"
+          value={ value }
+          onChange={ ({ target }) => setValue(target.value) }
+        />
+        <button
+          data-testid="button-filter"
+          type="button"
+          onClick={ handleNumericFilter }
+        >
+          filter
+
+        </button>
       </form>
+      { numericFilter.map((filter, index) => (
+        <div key={ index }>
+          <p data-testid="filter" key={ `${filter.column}-${index}` }>
+            {filter.column}
+            {' '}
+            {filter.operation}
+            {' '}
+            {filter.value}
+          </p>
+        </div>
+      )) }
       <table>
         <thead>
           <tr>
