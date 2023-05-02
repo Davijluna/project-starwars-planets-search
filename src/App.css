@@ -41,5 +41,9 @@
 }
 
 tbody, td, th {
-  border: 1px solid black;
+  border: 1px solid rgb(73, 69, 69);
+}
+
+body {
+  background-color: rgb(244, 246, 250);
 }
